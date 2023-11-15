@@ -25,12 +25,19 @@ class UserRegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'phone_number', 'national_id', 'password')
+        fields = ('username', 'email', 'phone_number', 'national_id', 'password', 'confirm_password')
         error_messages = {
             'username': {
                 'unique': 'This username is already exist!',
             },
         }
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.set_password(self.cleaned_data['password'])
+        if commit:
+            user.save()
+        return user
 
     def clean(self):
         cleaned_data = super().clean()

@@ -22,13 +22,25 @@ def user_register_view(request):
     return redirect('users:home')
     
 
-
 def user_login_view(request):
-    pass
+    if request.method == 'GET':
+        form = UserLoginForm()
+        return render(request, 'user/user_login_form.html', {'form': form})
+    form = UserLoginForm(request.POST)
+    if form.is_valid():
+        user = authenticate(request, username=form.cleaned_data['username'],
+                            password=form.cleaned_data['password'])
+        if user:
+            login(request, user)
+            messages.success(request, 'login successful')
+            return redirect('users:home')
+    messages.warning(request, 'login unsuccessful')
+    return render(request, 'user/user_login_form.html', {'form': form})
 
 
 def user_logout_view(request):
-    pass
+    logout(request)
+    return redirect('users:home')
 
 
 def user_profile_view(request, uid):
