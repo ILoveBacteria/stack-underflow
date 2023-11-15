@@ -3,13 +3,10 @@ from django import forms
 from .models import User
 
 
-class UserUpdateForm(forms.ModelForm):
-    confirm_password = forms.CharField(max_length=255, widget=[forms.widgets.PasswordInput], disabled=True)
-    password = forms.CharField(max_length=255, widget=[forms.widgets.PasswordInput], disabled=True)
-
+class UserUpdateForm(forms.ModelForm): 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'phone_number', 'national_id')
+        fields = ('username', 'email', 'phone_number', 'national_id')
         error_messages = {
             'username': {
                 'unique': 'This username is already exist!',
@@ -23,26 +20,32 @@ class UserUpdateForm(forms.ModelForm):
         return data
 
 
-class UserRegisterForm(UserUpdateForm):
-    confirm_password = forms.CharField(max_length=255, widget=[forms.widgets.PasswordInput])
-    password = forms.CharField(max_length=255, widget=[forms.widgets.PasswordInput])
+class UserRegisterForm(forms.ModelForm):
+    confirm_password = forms.CharField(max_length=255, widget=forms.widgets.PasswordInput)
 
-    def clean_password(self):
-        data1 = self.cleaned_data['password']
-        data2 = self.cleaned_data['confirm_password']
-        if data1 != data2:
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'phone_number', 'national_id', 'password')
+        error_messages = {
+            'username': {
+                'unique': 'This username is already exist!',
+            },
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data['password']
+        confirm_password = cleaned_data['confirm_password']
+        email = cleaned_data['email']
+        if password != confirm_password:
             raise forms.ValidationError('Password must match')
-        if len(data1) == 0:
+        if len(password) == 0 or len(confirm_password) == 0:
             raise forms.ValidationError('Enter the both of password')
-        return data1
-    
-    def clean_confirm_password(self):
-        data = self.cleaned_data['confirm_password']
-        if len(data) == 0:
-            raise forms.ValidationError('Enter the both of password')
-        return data
+        if User.objects.filter(email=email).count():
+            raise forms.ValidationError('This email is already exist!')
+        return cleaned_data
 
 
 class UserLoginForm(forms.Form):
-    username = forms.CharField(max_length=255)
-    password = forms.CharField(max_length=255, widget=[forms.widgets.PasswordInput])
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(max_length=255, widget=forms.widgets.PasswordInput)
