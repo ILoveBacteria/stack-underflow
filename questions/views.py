@@ -31,7 +31,14 @@ def question_downvote_view(request, question_id):
 
 
 def question_create_view(request):
-    pass
+    if request.method == 'GET':
+        form = QuestionForm()
+        return render(request, 'question/question_form.html', {'form': form})
+    form = QuestionForm(request.POST)
+    if form.is_valid():
+        obj = form.save()
+        return redirect('question_detail', question_id=obj.id)
+    return render(request, 'question/question_form.html', {'form': form})
 
 
 def question_search_view(request):

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.urls import reverse
@@ -44,11 +44,14 @@ def user_logout_view(request):
 
 
 def user_profile_view(request, uid):
-    pass
+    user = get_object_or_404(User, pk=uid)
+    return render(request, 'user/user_profile_view.html', {'user': user})
 
 
 def user_profile_edit_view(request):
-    pass
+    if request.method == 'GET':
+        form = UserUpdateForm(instance=request.user)
+        return render(request, 'user/user_edit.html', {'form': form})
 
 
 def user_home_view(request):
