@@ -1,3 +1,53 @@
 {% extends 'base.html' %}
 {% block content %}
-{% endblock %}
+<ul>
+    <li>{{ question.title }}</li>
+    <li>{{ question.body }}</li>
+    <li>{{ question.created_at }}</li>
+    <li>{{ question.updated_at }}</li>
+    <li>{{ question.votes }}</li>
+    <li>{{ question.user.username }}</li>
+    <li>{{ question.tags.all }}</li>
+</ul>
+<form action="{% url 'questions:question_upvote' question.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" name="upvote" value="Upvote">
+</form>
+<form action="{% url 'questions:question_downvote' question.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" name="downvote" value="Downvote">
+</form>
+<form action="{% url 'questions:question_update' question.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" name="update" value="Update">
+</form>
+
+{% for answer in answers %}
+<ul>
+    <li>{{ answer.body }}</li>
+    <li>{{ answer.created_at }}</li>
+    <li>{{ answer.updated_at }}</li>
+    <li>{{ answer.votes }}</li>
+    <li>{{ answer.user.username }}</li>
+</ul>
+<form action="{% url 'questions:answer_upvote' answer.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" name="upvote" value="Upvote">
+</form>
+<form action="{% url 'questions:answer_downvote' answer.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" name="downvote" value="Downvote">
+</form>
+<form action="{% url 'questions:answer_update' answer.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" name="update" value="Update">
+</form>
+{% endfor %}
+
+
+<form action="{% url 'questions:answer_create' question.id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" name="create" value="Create">
+</form>
+    {% endblock %}
