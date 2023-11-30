@@ -20,7 +20,7 @@ class Question(models.Model):
     
     @property
     def votes(self):
-        return self.upvoters - self.downvoters
+        return self.upvoters.count() - self.downvoters.count()
 
 
 class Answer(models.Model):
@@ -34,4 +34,4 @@ class Answer(models.Model):
 
     @property
     def votes(self):
-        return self.upvoters - self.downvoters
+        return self.upvoters.count() - self.downvoters.count()
