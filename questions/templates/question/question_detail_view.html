@@ -9,14 +9,21 @@
     <li>{{ question.user.username }}</li>
     <li>{{ question.tags.all }}</li>
 </ul>
-<form action="{% url 'questions:question_upvote' question.id %}" method="post">
-    {% csrf_token %}
-    <input type="submit" name="upvote" value="Upvote">
-</form>
-<form action="{% url 'questions:question_downvote' question.id %}" method="post">
-    {% csrf_token %}
-    <input type="submit" name="downvote" value="Downvote">
-</form>
+
+{% if not is_up_voted and not is_down_voted or is_up_voted %}
+    <form action="{% url 'questions:question_upvote' question.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" name="upvote" value="Upvote">
+    </form>
+{% endif %}
+
+{% if not is_down_voted and not is_up_voted or is_down_voted %}
+    <form action="{% url 'questions:question_downvote' question.id %}" method="post">
+        {% csrf_token %}
+        <input type="submit" name="downvote" value="Downvote">
+    </form>
+{% endif %}
+
 <form action="{% url 'questions:question_update' question.id %}" method="post">
     {% csrf_token %}
     <input type="submit" name="update" value="Update">

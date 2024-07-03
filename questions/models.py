@@ -24,6 +24,18 @@ class Question(models.Model):
     @property
     def votes(self):
         return self.upvoters.count() - self.downvoters.count()
+    
+    def toggle_up_vote(self, user):
+        if self.upvoters.filter(pk=user.id).exists():
+            self.upvoters.remove(user)
+        else:
+            self.upvoters.add(user)
+
+    def toggle_down_vote(self, user):
+        if self.downvoters.filter(pk=user.id).exists():
+            self.downvoters.remove(user)
+        else:
+            self.downvoters.add(user)
 
 
 class Answer(models.Model):
@@ -38,3 +50,15 @@ class Answer(models.Model):
     @property
     def votes(self):
         return self.upvoters.count() - self.downvoters.count()
+    
+    def toggle_up_vote(self, user):
+        if self.upvoters.filter(pk=user.id).exists():
+            self.upvoters.remove(user)
+        else:
+            self.upvoters.add(user)
+
+    def toggle_down_vote(self, user):
+        if self.downvoters.filter(pk=user.id).exists():
+            self.downvoters.remove(user)
+        else:
+            self.downvoters.add(user)
